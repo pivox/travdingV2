@@ -1,0 +1,11 @@
+type_loader: bitmart
+pairs:
+  BTCUSDT:
+    intervals: ["1m", "5m", "15m", "1h", "4h"]
+    active: 1
+  ETHUSDT:
+    intervals: ["1m", "5m", "15m", "1h", "4h"]
+    active: 1
+  SUIUSDT:
+    intervals: ["1m", "5m", "15m", "1h", "4h"]
+    active: 1
