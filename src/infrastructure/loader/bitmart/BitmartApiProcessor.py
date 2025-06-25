@@ -34,7 +34,20 @@ class BitmartApiProcessor(DataSourceProcessor):
         print(f"Fetching klines from {from_time} to {to_time}...")
 
         klines = client.get_klines(pair, interval, from_time, to_time)
-        kline_objs = [Kline.from_api_response(pair, interval, k) for k in klines]
+        if klines["code"] != 1000:
+            raise Exception(f"Erreur lors de la récupération des klines : {klines['message']}")
+        kline_objs = [
+            Kline(
+                timestamp=int(k['timestamp']),
+                open=float(k['open_price']),
+                close=float(k['close_price']),
+                high=float(k['high_price']),
+                low=float(k['low_price']),
+                volume=float(k['volume']),
+                contract_id=pair
+            )
+            for k in klines['data']
+        ]
 
         if kline_objs:
             klineRepository.save_klines(kline_objs)

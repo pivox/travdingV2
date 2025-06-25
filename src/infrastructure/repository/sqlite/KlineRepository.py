@@ -11,14 +11,14 @@ class KlineRepository:
         self.conn = sqlite3.connect(self.db_path)
 
     def save(self, kline: Kline):
-        conn = self._connect()
-        cursor = conn.cursor()
+        self.conn = sqlite3.connect(self.db_path)
+        cursor = self.conn.cursor()
         cursor.execute("""
             INSERT OR REPLACE INTO klines (timestamp, open, close, high, low, volume, contract_id)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (kline.timestamp, kline.open, kline.close, kline.high, kline.low, kline.volume, kline.contract_id))
-        conn.commit()
-        conn.close()
+        self.conn.commit()
+        self.conn.close()
 
     def get_latest_timestamp(self, pair: str, interval: str) -> int:
         conn = self._connect()
@@ -32,3 +32,7 @@ class KlineRepository:
 
     def get_last_kline(self):
         pass
+
+    def save_klines(self, klines: list[Kline]):
+        for kline in klines:
+            self.save(kline)
