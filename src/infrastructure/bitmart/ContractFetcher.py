@@ -27,7 +27,6 @@ class ContractFetcher:
         )
         if not contract_data:
             raise ValueError(f"No contract found for symbol: {symbol}")
-        return {"status": "success", "data": contract_data}
 
         # Sauvegarde si non existant
         if not self.repository.get_by_symbol(symbol):

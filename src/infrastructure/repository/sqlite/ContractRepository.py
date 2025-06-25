@@ -87,7 +87,7 @@ class ContractRepository:
         cursor = self.conn.execute(query, (symbol,))
         row = cursor.fetchone()
         if row:
-            return Contract(*row)
+            return Contract.from_row(row)
         return None
 
     def get_all(self) -> List[Contract]:

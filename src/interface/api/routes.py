@@ -19,7 +19,7 @@ def fetch(symbol: str = Path(...)):
         fetcher = ContractFetcher()
         contract_data = fetcher.fetch_and_store_if_missing(symbol)
 
-        return {"status": "success", "data": contract_data}
+        return  contract_data
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
