@@ -3,4 +3,7 @@ pandas
 pyyaml
 urllib3<2
 argparse
-
+get-project-root
+uvicorn
+fastapi
+debugpy

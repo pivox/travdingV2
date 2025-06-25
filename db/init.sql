@@ -1,0 +1,46 @@
+CREATE TABLE IF NOT EXISTS klines
+(
+    timestamp INTEGER PRIMARY KEY,
+    open      REAL,
+    close     REAL,
+    high      REAL,
+    low       REAL,
+    volume    REAL,
+    contract_id TEXT NOT NULL,
+    interval TEXT default '15m',
+    FOREIGN KEY (contract_id) REFERENCES contracts(symbol) ON DELETE CASCADE
+
+);
+CREATE TABLE IF NOT EXISTS contracts (
+    symbol TEXT PRIMARY KEY,
+    product_type TEXT,
+    open_timestamp INTEGER,
+    expire_timestamp INTEGER,
+    settle_timestamp INTEGER,
+    base_currency TEXT,
+    quote_currency TEXT,
+    last_price REAL,
+    volume_24h INTEGER,
+    turnover_24h REAL,
+    index_price REAL,
+    index_name TEXT,
+    contract_size REAL,
+    min_leverage INTEGER,
+    max_leverage INTEGER,
+    price_precision REAL,
+    vol_precision REAL,
+    max_volume INTEGER,
+    min_volume INTEGER,
+    funding_rate REAL,
+    expected_funding_rate REAL,
+    open_interest INTEGER,
+    open_interest_value REAL,
+    high_24h REAL,
+    low_24h REAL,
+    change_24h REAL,
+    funding_time INTEGER,
+    market_max_volume INTEGER,
+    funding_interval_hours INTEGER,
+    status TEXT,
+    delist_time INTEGER
+);

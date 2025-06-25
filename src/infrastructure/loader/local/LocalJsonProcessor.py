@@ -1,5 +1,5 @@
-from src.Coordinator.DataSourceCoordinator import DataSourceProcessor
-from src.Loader.EnumTypeData import EnumTypeData
+from src.application.coordinator.DataSourceCoordinator import DataSourceProcessor
+from src.application.loader.EnumTypeData import EnumTypeData
 from typing import Dict, Any
 
 from src.configLoader import CONFIG

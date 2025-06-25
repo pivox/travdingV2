@@ -10,7 +10,6 @@ class ConfigLoader:
         project_root = os.path.join(current_script_dir, '..')
         self.config_path = os.path.join(project_root, self.CONFIG_FOLDER_NAME, self.CONFIG_FILE_NAME)
 
-        print(f"Loading config from: {self.config_path}")
         try:
             with open(self.config_path, 'r') as file:
                 self.data = yaml.safe_load(file)

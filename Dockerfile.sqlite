@@ -1,0 +1,14 @@
+FROM alpine:3.17
+
+# Changer le miroir pour éviter les erreurs réseau
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories
+
+# Installer sqlite3 CLI
+RUN apk add --no-cache sqlite
+
+# Déclarer un volume persistant pour la base
+VOLUME ["/data"]
+WORKDIR /data
+
+# Lancer SQLite en shell
+CMD ["sleep", "infinity"]

@@ -2,9 +2,9 @@ from typing import List
 
 from pandas import Interval
 
-from src.Coordinator.DataSourceCoordinator import DataSourceProcessor
-from src.Loader.Json.BitMart.BitmartApiProcessor import BitmartApiProcessor
-from src.Loader.Json.Local.LocalJsonProcessor import LocalJsonProcessor
+from src.application.coordinator.DataSourceCoordinator import DataSourceProcessor
+from src.infrastructure.loader.bitmart.BitmartApiProcessor import BitmartApiProcessor
+from src.infrastructure.loader.local.LocalJsonProcessor import LocalJsonProcessor
 
 
 class DataLoader:
@@ -17,7 +17,7 @@ class DataLoader:
             BitmartApiProcessor(),
         ]
 
-    def load(self, pair: str, interval: Interval) -> None:
+    def load(self, pair: str, interval: str) -> None:
         for loader in self.loaders:
             if loader.can_handle():
                 return loader.handle({'pair': pair, 'interval': interval})
