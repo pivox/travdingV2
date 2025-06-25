@@ -1,5 +1,7 @@
 import sqlite3
 import os
+from typing import Optional
+
 from get_project_root import root_path
 from src.domain.entity.Kline import Kline
 
@@ -13,24 +15,41 @@ class KlineRepository:
     def save(self, kline: Kline):
         self.conn = sqlite3.connect(self.db_path)
         cursor = self.conn.cursor()
-        cursor.execute("""
-            INSERT OR REPLACE INTO klines (timestamp, open, close, high, low, volume, contract_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (kline.timestamp, kline.open, kline.close, kline.high, kline.low, kline.volume, kline.contract_id))
-        self.conn.commit()
+        query = """
+                INSERT OR REPLACE INTO klines (timestamp, "open", close, high, low, volume, symbol, interval)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """
+        values = (
+            kline.timestamp, kline.open, kline.close,
+            kline.high, kline.low, kline.volume,
+            kline.symbol, kline.interval
+        )
+        try:
+            cursor.execute(query, values)
+            self.conn.commit()
+        except Exception as e:
+            print(f"❌ Une erreur est survenue : {e}")
+            print(f"🔎 Requête : {query}")
+            print(f"📦 Valeurs : {values}")
+
         self.conn.close()
 
-    def get_latest_timestamp(self, pair: str, interval: str) -> int:
-        conn = self._connect()
-        cursor = conn.cursor()
+    def get_latest_timestamp(self, pair: str, interval: str) -> Optional[Kline]:
+        self.conn = sqlite3.connect(self.db_path)
+        cursor = self.conn.cursor()
         cursor.execute("""
-            SELECT MAX(timestamp) FROM klines WHERE contract_id = ?
-        """, (contract_id,))
-        result = cursor.fetchone()
-        conn.close()
-        return result[0] if result and result[0] is not None else None
+            SELECT k.* 
+            FROM klines k 
+            JOIN contracts c ON c.symbol = k.symbol 
+            WHERE c.symbol = ? and k.interval = ?
+        """, (pair, interval))
+        row = cursor.fetchone()
+        self.conn.close()
+        if row:
+            return Kline.from_row(row)
+        return None
 
-    def get_last_kline(self):
+    def get_last_kline(self, pair: str, interval: str) -> Kline:
         pass
 
     def save_klines(self, klines: list[Kline]):

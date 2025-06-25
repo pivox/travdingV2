@@ -53,6 +53,6 @@ class KlineFetcher:
                 high=float(entry["high_price"]),
                 low=float(entry["low_price"]),
                 volume=float(entry["volume"]),
-                contract_id=contract_id
+                symbol=symbol
             )
             self.repository.save(kline)

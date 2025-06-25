@@ -6,9 +6,9 @@ CREATE TABLE IF NOT EXISTS klines
     high      REAL,
     low       REAL,
     volume    REAL,
-    contract_id TEXT NOT NULL,
+    symbol TEXT NOT NULL,
     interval TEXT default '15m',
-    FOREIGN KEY (contract_id) REFERENCES contracts(symbol) ON DELETE CASCADE
+    FOREIGN KEY (symbol) REFERENCES contracts(symbol) ON DELETE CASCADE
 
 );
 CREATE TABLE IF NOT EXISTS contracts (
