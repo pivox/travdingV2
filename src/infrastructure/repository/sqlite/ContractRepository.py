@@ -1,4 +1,3 @@
-
 import sqlite3
 from typing import Optional, List
 from get_project_root import root_path
@@ -7,6 +6,22 @@ import os
 
 
 class ContractRepository:
+    INTERVAL_SQL_MAP = {
+        "1m": "+1 minutes",
+        "3m": "+3 minutes",
+        "5m": "+5 minutes",
+        "15m": "+15 minutes",
+        "30m": "+30 minutes",
+        "1h": "+1 hours",
+        "2h": "+2 hours",
+        "4h": "+4 hours",
+        "6h": "+6 hours",
+        "12h": "+12 hours",
+        "1d": "+1 days",
+        "3d": "+3 days",
+        "1w": "+7 days"
+    }
+
     def __init__(self, db_name: str = "db.sqlite"):
         root = root_path(ignore_cwd=False)
         self.db_path = os.path.join(root, "db", "db.sqlite")
@@ -16,17 +31,18 @@ class ContractRepository:
 
     def _create_table(self):
         query = """
-        CREATE TABLE IF NOT EXISTS contracts (
-            symbol TEXT PRIMARY KEY,
-            quote_currency TEXT,
-            base_currency TEXT,
-            lot_size REAL,
-            contract_size REAL,
-            tick_size REAL,
-            open_type TEXT,
-            mode INTEGER
-        )
-        """
+                CREATE TABLE IF NOT EXISTS contracts
+                (
+                    symbol         TEXT PRIMARY KEY,
+                    quote_currency TEXT,
+                    base_currency  TEXT,
+                    lot_size       REAL,
+                    contract_size  REAL,
+                    tick_size      REAL,
+                    open_type      TEXT,
+                    mode           INTEGER
+                ) \
+                """
         self.conn.execute(query)
         self.conn.commit()
 
@@ -99,3 +115,33 @@ class ContractRepository:
         query = "SELECT symbol FROM contracts"
         cursor = self.conn.execute(query)
         return [row[0] for row in cursor.fetchall()]
+
+    def get_all_to_launch(self, interval: str) -> List[str]:
+        interval_str = self.INTERVAL_SQL_MAP.get(interval)
+        if not interval_str:
+            raise ValueError(f"Unknown label: {interval}")
+        query = f"""
+                select symbol
+                from contracts
+                where (contracts.delist_time = 0 or contracts.delist_time > unixepoch())
+                  and (contracts.nextSchedule is null or contracts.nextSchedule >= strftime('%s', 'now', '{interval_str}'))
+                """
+        cursor = self.conn.execute(query)
+
+        return [row[0] for row in cursor.fetchall()]
+
+    def update_next_schedule(self, symbol, interval):
+        interval_str = self.INTERVAL_SQL_MAP.get(interval)
+        if not interval_str:
+            raise ValueError(f"Unknown label: {interval}")
+
+
+        query = f"""
+                UPDATE contracts
+                SET nextSchedule = strftime('%s', 'now', '{interval_str}')
+                WHERE symbol = ?
+            """
+
+        self.conn.execute(query, (symbol,))
+        self.conn.commit()
+

@@ -8,7 +8,7 @@ router = APIRouter()
 def analyse(pair: str = Query(...), interval: str = Query(...)):
     analyser = Analyser()
     try:
-        result = analyser.loadKline(pair, interval)
+        result = analyser.load_kline(pair, interval)
         return {"status": "success", "result": result}
     except Exception as e:
         return {"status": "error", "message": str(e)}

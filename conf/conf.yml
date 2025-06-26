@@ -1,4 +1,7 @@
 type_loader: bitmart
+timezone: "UTC"
+is_fixed: false
+fixed_date: "2025-06-26 12:00:00"  # format: YYYY-MM-DD HH:MM:SS
 pairs:
   BTCUSDT:
     intervals: ["1m", "5m", "15m", "1h", "4h"]

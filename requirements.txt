@@ -7,3 +7,4 @@ get-project-root
 uvicorn
 fastapi
 debugpy
+pytz

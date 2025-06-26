@@ -1,8 +1,7 @@
 import requests
-import time
-from datetime import datetime
-from src.domain.model.Kline import Kline
+from src.domain.entity.Kline import Kline
 from src.infrastructure.repository.sqlite.KlineRepository import KlineRepository
+from src.timezoneService import P_DATETIME
 
 class KlineFetcher:
     BASE_URL = "https://api-cloud-v2.bitmart.com"
@@ -16,7 +15,7 @@ class KlineFetcher:
         symbol = symbol.upper().replace("_", "")
         contract_id = symbol
 
-        now = int(time.time())
+        now = P_DATETIME.get_current_timestamp()
         latest_timestamp = self.repository.get_latest_timestamp(contract_id)
 
         if latest_timestamp:
@@ -24,7 +23,7 @@ class KlineFetcher:
             start_time = latest_timestamp + 60
         else:
             # Si aucune donnée, on prend 4h en arrière
-            start_time = now - (duration_minutes * 60)
+            start_time = DATETIME - (duration_minutes * 60)
 
         # On arrondit à la minute (secondes = 0)
         start_time -= start_time % 60

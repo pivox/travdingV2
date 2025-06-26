@@ -1,6 +1,6 @@
 from typing import Dict, Any
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from src.application.coordinator.DataSourceCoordinator import DataSourceProcessor
 from src.application.loader.EnumTypeData import EnumTypeData
@@ -8,6 +8,7 @@ from src.configLoader import CONFIG
 from src.infrastructure.repository.sqlite.KlineRepository import KlineRepository
 from src.infrastructure.bitmart.BitmartClient import BitmartClient
 from src.domain.entity.Kline import Kline
+from src.timezoneService import P_DATETIME
 
 
 class BitmartApiProcessor(DataSourceProcessor):
@@ -23,16 +24,28 @@ class BitmartApiProcessor(DataSourceProcessor):
         klineRepository = KlineRepository()
         client = BitmartClient()
 
-        last_kline = klineRepository.get_last_kline()
-        if last_kline:
-            from_time = last_kline.close_time
+        last_kline = klineRepository.get_latest_timestamp(pair, interval)
+        from_time = None
+        # si la date est < date cuorante - 4h alors je sors
+        # si la date est > date cuorante  -4 h je la récupère
+
+        if last_kline is None:
+            from_time = self.align_to_minute(
+                datetime.utcnow() - timedelta(minutes=client.kline_step_value(interval) * 100)
+            )
+        if P_DATETIME.get_current_datetime() > P_DATETIME.add_interval(last_kline.timestamp, interval):
+            from_time = datetime.fromtimestamp(int(last_kline.timestamp))
         else:
-            from_time = self.align_to_minute(datetime.utcnow() - timedelta(hours=4))
+            return None
 
         to_time = self.align_to_minute(datetime.utcnow())
 
-        print(f"Fetching klines from {from_time} to {to_time}...")
+        from_time_str = from_time.strftime('%Y-%m-%d %H:%M:%S')
+        to_time_str = to_time.strftime('%Y-%m-%d %H:%M:%S')  # direct, car déjà datetime
 
+        print(f"Fetching klines from {from_time_str} to {to_time_str}...")
+
+        print(f"Fetching klines from {from_time_str} to {to_time_str}...")
         klines = client.get_klines(pair, interval, from_time, to_time)
         if klines["code"] != 1000:
             raise Exception(f"Erreur lors de la récupération des klines : {klines['message']}")
@@ -44,7 +57,8 @@ class BitmartApiProcessor(DataSourceProcessor):
                 high=float(k['high_price']),
                 low=float(k['low_price']),
                 volume=float(k['volume']),
-                contract_id=pair
+                interval=interval,
+                symbol=pair
             )
             for k in klines['data']
         ]

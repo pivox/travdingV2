@@ -1,13 +1,16 @@
 from src.application.loader.DataLoader import DataLoader
-from src.configLoader import CONFIG
-
 
 class Analyser:
 
-    def loadKline(self, pair: str, interval: str):
+    def load_kline(self, pair: str, interval: str):
 
         loader = DataLoader()
         loader.load(pair, interval)
         return {"message": f"Kline loaded for {pair} on {interval}"}
+
+    def analyze_all(self, interval: str):
+        loader = DataLoader()
+        result = loader.load_all(interval)
+        print(result)
 
 

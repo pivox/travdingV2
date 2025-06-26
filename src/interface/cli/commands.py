@@ -1,9 +1,13 @@
 from src.application.analyser.Analyser import Analyser
 from src.infrastructure.bitmart.ContractFetcher import ContractFetcher
 
+def run_all_4h():
+    analyser = Analyser()
+    analyser.analyze_all("4h")
+
 def run_analyse(pair: str, interval: str):
     analyser = Analyser()
-    analyser.loadKline(pair, interval)
+    analyser.load_kline(pair, interval)
 
 def run_fetch(pair: str):
     fetcher = ContractFetcher()

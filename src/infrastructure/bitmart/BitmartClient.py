@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import requests
 from typing import Dict, Any
 
@@ -5,7 +7,7 @@ from typing import Dict, Any
 class BitmartClient:
     BASE_URL = "https://api-cloud-v2.bitmart.com"
 
-    def get_klines(self, symbol: str, interval: str, start_time: int, end_time: int) -> Dict[str, Any]:
+    def get_klines(self, symbol: str, interval: str, start_time: datetime, end_time: datetime) -> Dict[str, Any]:
         url = f"{self.BASE_URL}/contract/public/kline"
         params = {
             "symbol": symbol,
@@ -15,6 +17,7 @@ class BitmartClient:
         }
         print(f"Requête vers BitMart : {url} avec {params}")
         response = requests.get(url, params=params)
+
         response.raise_for_status()
         return response.json()
 

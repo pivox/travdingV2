@@ -1,16 +1,16 @@
-CREATE TABLE IF NOT EXISTS klines
-(
-    timestamp INTEGER PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS klines (
+    id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp INTEGER,
     open      REAL,
     close     REAL,
     high      REAL,
     low       REAL,
     volume    REAL,
-    symbol TEXT NOT NULL,
-    interval TEXT default '15m',
+    symbol    TEXT NOT NULL,
+    interval  TEXT DEFAULT '15m',
     FOREIGN KEY (symbol) REFERENCES contracts(symbol) ON DELETE CASCADE
-
 );
+
 CREATE TABLE IF NOT EXISTS contracts (
     symbol TEXT PRIMARY KEY,
     product_type TEXT,
@@ -42,5 +42,6 @@ CREATE TABLE IF NOT EXISTS contracts (
     market_max_volume INTEGER,
     funding_interval_hours INTEGER,
     status TEXT,
-    delist_time INTEGER
+    delist_time INTEGER,
+    nextSchedule integer default null
 );

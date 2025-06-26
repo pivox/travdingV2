@@ -31,6 +31,7 @@ class Contract:
         self.funding_interval_hours = int(data.get("funding_interval_hours", 0))
         self.status = data.get("status")
         self.delist_time = int(data.get("delist_time", 0))
+        self.nextSchedule = int(data.get("nextSchedule", 0))
 
     @classmethod
     def from_row(cls, row: tuple) -> "Contract":
@@ -41,7 +42,7 @@ class Contract:
             "price_precision", "vol_precision", "max_volume", "min_volume", "funding_rate",
             "expected_funding_rate", "open_interest", "open_interest_value", "high_24h", "low_24h",
             "change_24h", "funding_time", "market_max_volume", "funding_interval_hours", "status",
-            "delist_time"
+            "delist_time", "nextSchedule"
         ]
         data = dict(zip(keys, row))
         return cls(data)
