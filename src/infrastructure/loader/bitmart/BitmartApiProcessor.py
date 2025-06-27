@@ -26,16 +26,18 @@ class BitmartApiProcessor(DataSourceProcessor):
 
         last_kline = klineRepository.get_latest_timestamp(pair, interval)
         from_time = None
-        # si la date est < date cuorante - 4h alors je sors
-        # si la date est > date cuorante  -4 h je la récupère
+        # si la date récupéré + 4h est < date cuorante -alors je sors
+        # si la date récupéré + 4h est > date cuorante  je la récupère
+
 
         if last_kline is None:
             from_time = self.align_to_minute(
                 datetime.utcnow() - timedelta(minutes=client.kline_step_value(interval) * 100)
             )
-        if P_DATETIME.get_current_datetime() > P_DATETIME.add_interval(last_kline.timestamp, interval):
+        elif  P_DATETIME.add_interval(last_kline.timestamp, interval) <= P_DATETIME.get_current_datetime() :
             from_time = datetime.fromtimestamp(int(last_kline.timestamp))
         else:
+            print(f"kline de {pair} sur l'interval : {interval} est à jours")
             return None
 
         to_time = self.align_to_minute(datetime.utcnow())
