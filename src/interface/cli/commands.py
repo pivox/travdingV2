@@ -5,9 +5,13 @@ def run_all_4h():
     analyser = Analyser()
     analyser.analyze_all("4h")
 
-def run_analyse(pair: str, interval: str):
+def load_pair_per_interval(pair: str, interval: str):
     analyser = Analyser()
     analyser.load_kline(pair, interval)
+
+def run_analyse(pair: str, interval: str):
+    analyser = Analyser()
+    analyser.analyze(pair)
 
 def run_fetch(pair: str):
     fetcher = ContractFetcher()

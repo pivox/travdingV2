@@ -1,0 +1,93 @@
+@startuml
+title Architecture des indicateurs techniques - travdingV2
+
+skinparam classAttributeIconSize 0
+
+' Classe abstraite de base
+abstract class TechnicalIndicator {
+  - name: str
+  - timeframe: str
+  - params: dict
+  - kline_data: pd.DataFrame
+  + validate() : bool
+}
+
+' RSI
+class RSIIndicator {
+  + validate() : bool
+  + compute_rsi() : pd.Series
+}
+TechnicalIndicator <|-- RSIIndicator
+
+' EMA
+class EMAIndicator {
+  + validate() : bool
+  + compute_ema(period: int) : pd.Series
+}
+TechnicalIndicator <|-- EMAIndicator
+
+' MACD
+class MACDIndicator {
+  + validate() : bool
+  + compute_macd() : Tuple[pd.Series, pd.Series]
+}
+TechnicalIndicator <|-- MACDIndicator
+
+' Bollinger Bands
+class BollingerIndicator {
+  + validate() : bool
+  + compute_bands() : Tuple[pd.Series, pd.Series]
+}
+TechnicalIndicator <|-- BollingerIndicator
+
+' Stochastic RSI
+class StochasticRSIIndicator {
+  + validate() : bool
+  + compute_stoch_rsi() : pd.Series
+}
+TechnicalIndicator <|-- StochasticRSIIndicator
+
+' VWAP
+class VWAPIndicator {
+  + validate() : bool
+  + compute_vwap() : pd.Series
+}
+TechnicalIndicator <|-- VWAPIndicator
+
+' Volume
+class VolumeIndicator {
+  + validate() : bool
+}
+TechnicalIndicator <|-- VolumeIndicator
+
+' Candlestick pattern
+class CandlePatternIndicator {
+  + validate() : bool
+}
+TechnicalIndicator <|-- CandlePatternIndicator
+
+' Supertrend
+class SupertrendIndicator {
+  + validate() : bool
+  + compute_supertrend() : pd.DataFrame
+}
+TechnicalIndicator <|-- SupertrendIndicator
+
+' ADX
+class ADXIndicator {
+  + validate() : bool
+  + compute_adx() : pd.DataFrame
+}
+TechnicalIndicator <|-- ADXIndicator
+
+' Gestionnaire central
+class TechnicalIndicatorManager {
+  - indicators_config: dict
+  - kline_data: pd.DataFrame
+  + load_indicators() : List[TechnicalIndicator]
+  + evaluate_all() : Dict[str, bool]
+  + compute_score(results: Dict[str, bool]) : float
+}
+TechnicalIndicatorManager --> TechnicalIndicator : uses
+
+@enduml
